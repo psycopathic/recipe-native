@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  password     String
+  name         String?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  refreshToken String?
+
+  favorites Favorite[]
+
+  @@map("users")
+}
+
+model Favorite {
+  id        Int       @id @default(autoincrement())
+  userId    String    @map("user_id")
+  recipeId  Int       @map("recipe_id")
+  title     String
+  image     String?
+  cookTime  String?   @map("cook_time")
+  servings  String?
+  createdAt DateTime? @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("favorites")
+}
